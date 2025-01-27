@@ -20,7 +20,13 @@ import com.pinguela.thegoldenbook.service.LibroCriteria;
 import com.pinguela.thegoldenbook.service.LibroService;
 import com.pinguela.thegoldenbook.service.impl.LibroServiceImpl;
 
-@Path("libro")
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
+@Path("/libro")
 public class LibroResource {
 
 	private LibroService libroService = null;
@@ -34,6 +40,28 @@ public class LibroResource {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Operation(
+				summary="Búsqueda de libros por criteria",
+			   description="Recupera una lista de libros en función de los criterios introducidos",
+			   responses= {
+						@ApiResponse(
+								responseCode="200",
+								description="Libros encontrados",
+								content=@Content(
+										mediaType=MediaType.APPLICATION_JSON,
+										schema=@Schema(implementation = LibroDTO.class)
+										)
+								),
+						@ApiResponse(
+								responseCode="404",
+								description="No se han encontrado resultados"
+								),
+						@ApiResponse(
+								responseCode="400",
+								description="Error al recuperar los datos"
+								)
+					}
+	)
 	public Response findByCriteria(
 			@FormParam("id") Long id,
 			@FormParam("nombre") String nombre,
