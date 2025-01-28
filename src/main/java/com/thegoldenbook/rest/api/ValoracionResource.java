@@ -11,7 +11,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +19,11 @@ import com.pinguela.thegoldenbook.dao.DataException;
 import com.pinguela.thegoldenbook.model.ValoracionDTO;
 import com.pinguela.thegoldenbook.service.ValoracionService;
 import com.pinguela.thegoldenbook.service.impl.ValoracionServiceImpl;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("/valoracion")
 public class ValoracionResource {
@@ -35,6 +39,24 @@ public class ValoracionResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Operation(
+				summary="Creación de valoración",
+				description="Crea una valoracion para un libro asociada a un cliente",
+				responses= {
+						@ApiResponse(
+								responseCode="200",
+								description="Valoracion creada correctamente"
+								),
+						@ApiResponse(
+								responseCode="400",
+								description="Datos introducidos incorrectos o incompletos"
+								),
+						@ApiResponse(
+								responseCode="500",
+								description="Error al crear la valoración"
+								)
+				}
+			)
 	public Response createValoracion(
 	        @FormParam("clienteId") Long clienteId, 
 	        @FormParam("libroId") Long libroId,
