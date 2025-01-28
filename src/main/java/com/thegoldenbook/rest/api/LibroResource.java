@@ -20,7 +20,6 @@ import com.pinguela.thegoldenbook.service.LibroCriteria;
 import com.pinguela.thegoldenbook.service.LibroService;
 import com.pinguela.thegoldenbook.service.impl.LibroServiceImpl;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
