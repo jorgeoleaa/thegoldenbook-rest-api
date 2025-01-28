@@ -56,7 +56,7 @@ public class ValoracionResource {
 							)
 			}
 			)
-	public Response createValoracion(
+	public Response create(
 			@FormParam("clienteId") Long clienteId, 
 			@FormParam("libroId") Long libroId,
 			@FormParam("numeroEstrellas") Double numeroEstrellas,
@@ -93,4 +93,5 @@ public class ValoracionResource {
 					.build();
 		}
 	}
+	
 }
