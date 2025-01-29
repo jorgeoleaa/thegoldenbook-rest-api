@@ -48,27 +48,17 @@ public class ValoracionResource {
     responses = {
         @ApiResponse(
             responseCode = "200",
-            description = "Valoración creada correctamente.",
-            content = @Content(
-                mediaType = MediaType.APPLICATION_JSON,
-                schema = @Schema(implementation = String.class)
-            )
+            description = "Valoración creada correctamente."  
         ),
         @ApiResponse(
             responseCode = "400",
-            description = "Datos introducidos incorrectos o incompletos.",
-            content = @Content(
-                mediaType = MediaType.APPLICATION_JSON,
-                schema = @Schema(implementation = String.class)
-            )
+            description = "Datos introducidos incorrectos o incompletos."
+        
         ),
         @ApiResponse(
             responseCode = "500",
-            description = "Error al crear la valoración.",
-            content = @Content(
-                mediaType = MediaType.APPLICATION_JSON,
-                schema = @Schema(implementation = String.class)
-            )
+            description = "Error al crear la valoración."
+          
         )
     }
 )
