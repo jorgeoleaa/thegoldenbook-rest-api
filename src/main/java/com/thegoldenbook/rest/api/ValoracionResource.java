@@ -39,27 +39,39 @@ public class ValoracionResource {
 		valoracionService = new ValoracionServiceImpl();
 	}
 
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Operation(
-			summary="Creación de valoración",
-			description="Crea una valoracion para un libro asociada a un cliente",
-			responses= {
-					@ApiResponse(
-							responseCode="200",
-							description="Valoracion creada correctamente"
-							),
-					@ApiResponse(
-							responseCode="400",
-							description="Datos introducidos incorrectos o incompletos"
-							),
-					@ApiResponse(
-							responseCode="500",
-							description="Error al crear la valoración"
-							)
-			}
-			)
+@POST
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+@Produces(MediaType.APPLICATION_JSON)
+@Operation(
+    summary = "Creación de valoración",
+    description = "Crea una valoración para un libro asociada a un cliente.",
+    responses = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Valoración creada correctamente.",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON,
+                schema = @Schema(implementation = String.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos introducidos incorrectos o incompletos.",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON,
+                schema = @Schema(implementation = String.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error al crear la valoración.",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON,
+                schema = @Schema(implementation = String.class)
+            )
+        )
+    }
+)
 	public Response create(
 			@FormParam("clienteId") Long clienteId, 
 			@FormParam("libroId") Long libroId,
