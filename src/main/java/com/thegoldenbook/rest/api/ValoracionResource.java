@@ -5,9 +5,9 @@ import java.util.Date;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -23,8 +23,6 @@ import com.pinguela.thegoldenbook.service.ValoracionService;
 import com.pinguela.thegoldenbook.service.impl.ValoracionServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Path("/valoracion")
@@ -40,7 +38,8 @@ public class ValoracionResource {
 	}
 
 @POST
-@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+@Path("/{locale}")
+@Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Operation(
     summary = "Creación de valoración",
@@ -62,36 +61,13 @@ public class ValoracionResource {
         )
     }
 )
-	public Response create(
-			@FormParam("clienteId") Long clienteId, 
-			@FormParam("libroId") Long libroId,
-			@FormParam("numeroEstrellas") Double numeroEstrellas,
-			@FormParam("asunto") String asunto,
-			@FormParam("cuerpo") String cuerpo,
-			@FormParam("locale") String locale) {
-
-		if (clienteId == null || libroId == null || numeroEstrellas == null || 
-				asunto == null || asunto.trim().isEmpty() || 
-				cuerpo == null || cuerpo.trim().isEmpty() || 
-				locale == null || locale.trim().isEmpty()) {
-
-			return Response.status(Response.Status.BAD_REQUEST)
-					.entity("Todos los campos son obligatorios y no pueden estar vacíos")
-					.build();
-		}
-
-		ValoracionDTO valoracion = new ValoracionDTO();
-
-		valoracion.setClienteId(clienteId);
-		valoracion.setLibroId(libroId);
-		valoracion.setNumeroEstrellas(numeroEstrellas);
-		valoracion.setAsunto(asunto);
-		valoracion.setCuerpo(cuerpo);
-		valoracion.setFechaPublicacion(new Date());
+	public Response create(@PathParam("locale") String locale, ValoracionDTO valoracion){
 
 		try {
+			valoracion.setFechaPublicacion(new Date());
 			valoracionService.create(valoracion, locale);
-			return Response.status(Status.OK).entity("Valoración creada correctamente").build();
+			ValoracionDTO valoracionCreated = valoracionService.findByValoracion(valoracion.getClienteId(), valoracion.getLibroId());
+			return Response.status(Status.OK).entity(valoracionCreated).build();
 		} catch (DataException de) {
 			logger.error(de.getMessage(), de);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
