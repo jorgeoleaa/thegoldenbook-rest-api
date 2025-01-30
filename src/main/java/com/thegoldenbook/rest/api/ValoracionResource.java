@@ -108,27 +108,15 @@ public class ValoracionResource {
 	    responses = {
 	        @ApiResponse(
 	            responseCode = "200",
-	            description = "La valoración fue eliminada exitosamente.",
-	            content = @Content(
-	            		mediaType = MediaType.APPLICATION_JSON, 
-	            		schema = @Schema(implementation = String.class)
-	            		)
+	            description = "La valoración fue eliminada exitosamente."
 	        ),
 	        @ApiResponse(
 	            responseCode = "400",
-	            description = "La solicitud no es válida o la valoración no existe.",
-	            content = @Content(
-	            		mediaType = MediaType.APPLICATION_JSON, 
-	            		schema = @Schema(implementation = String.class)
-	            		)
+	            description = "La solicitud no es válida o la valoración no existe."
 	        ),
 	        @ApiResponse(
 	            responseCode = "500",
-	            description = "Ocurrió un error interno al intentar eliminar la valoración.",
-	            content = @Content(
-	            		mediaType = MediaType.APPLICATION_JSON, 
-	            		schema = @Schema(implementation = String.class)
-	            		)
+	            description = "Ocurrió un error interno al intentar eliminar la valoración."
 	        )
 	    }
 	)
