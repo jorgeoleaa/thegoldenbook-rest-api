@@ -42,6 +42,28 @@ public class PedidoResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@Operation(
+			summary = "Búsqueda de pedidos por criteria",
+			description = "Búsqueda de pedidos a partir de varios parámetros introducidos",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "Pedidos encontrados",
+							content = @Content(
+									mediaType = MediaType.APPLICATION_JSON,
+									schema = @Schema(implementation = Pedido.class)
+									)
+							),
+					@ApiResponse(
+							responseCode = "400",
+							description = "Datos introducidos incorrectos"
+							),
+					@ApiResponse(
+							responseCode = "500",
+							description = "Error al procesar la solicitud"
+							)
+			}
+			)
 	public Response findByCriteria(
 			@QueryParam("id") Long id,
 			@QueryParam("fechaDesde") String fechaDesde,
@@ -68,9 +90,9 @@ public class PedidoResource {
 	                pedidoCriteria.setFechaHasta(formatter.parse(fechaHasta));
 	            }
 	        } catch (Exception pe) {
-	            logger.error("Error parsing date: " + pe.getMessage(), pe);
+	            logger.error("Error parseando la fecha: " + pe.getMessage(), pe);
 	            return Response.status(Status.BAD_REQUEST)
-	                           .entity("Invalid date format. Use yyyy-MM-dd.")
+	                           .entity("Formato de fecha inválido. Usa yyyy-MM-dd.")
 	                           .build();
 	        }
 
@@ -80,7 +102,7 @@ public class PedidoResource {
 	        } catch (DataException de) {
 	            logger.error("Data error: " + de.getMessage(), de);
 	            return Response.status(Status.INTERNAL_SERVER_ERROR)
-	                           .entity("An error occurred while processing your request.")
+	                           .entity("Error en el proceso de búsqueda de los pedidos")
 	                           .build();
 	        }
 	    }
