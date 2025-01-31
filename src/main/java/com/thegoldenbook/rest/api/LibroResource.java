@@ -4,9 +4,10 @@ import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -36,7 +37,7 @@ public class LibroResource {
 		libroService = new LibroServiceImpl();
 	}
 	
-	@POST
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Operation(
@@ -62,18 +63,18 @@ public class LibroResource {
 					}
 	)
 	public Response findByCriteria(
-			@FormParam("id") Long id,
-			@FormParam("nombre") String nombre,
-			@FormParam("isbn") String isbn,
-			@FormParam("desdePrecio") Double desdePrecio,
-			@FormParam("hastaPrecio") Double hastaPrecio,
-			@FormParam("desdeFecha") Date desdeFecha,
-			@FormParam("hastaFecha") Date hastaFecha,
-			@FormParam("generoLiterarioId") Integer generoLiterarioId,
-			@FormParam("clasificacionEdadId") Integer clasificacionEdadId,
-			@FormParam("idiomaId") Integer idiomaId,
-			@FormParam("formatoId") Integer formatoId,
-			@FormParam("locale") String locale){
+			@QueryParam("id") Long id,
+			@QueryParam("nombre") String nombre,
+			@QueryParam("isbn") String isbn,
+			@QueryParam("desdePrecio") Double desdePrecio,
+			@QueryParam("hastaPrecio") Double hastaPrecio,
+			@QueryParam("desdeFecha") Date desdeFecha,
+			@QueryParam("hastaFecha") Date hastaFecha,
+			@QueryParam("generoLiterarioId") Integer generoLiterarioId,
+			@QueryParam("clasificacionEdadId") Integer clasificacionEdadId,
+			@QueryParam("idiomaId") Integer idiomaId,
+			@QueryParam("formatoId") Integer formatoId,
+			@QueryParam("locale") String locale){
 		
 		LibroCriteria criteria = new LibroCriteria();
 		
