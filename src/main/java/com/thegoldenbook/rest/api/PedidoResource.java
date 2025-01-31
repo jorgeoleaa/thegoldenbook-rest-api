@@ -1,9 +1,11 @@
 package com.thegoldenbook.rest.api;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -69,6 +71,20 @@ public class PedidoResource {
 		}catch(MailException me) {
 			logger.error("Error al enviar el correo electrónico", me.getMessage(), me);
 			return Response.status(Status.BAD_REQUEST).entity("Error al enviar el correo de creación de peiddo").build();
+		}
+		
+	}
+	
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response delete(@QueryParam("id") Long id) {
+		
+		try {
+			pedidoService.delete(id);
+			return Response.status(Status.OK).entity("Pedido eliminado correctamente").build();
+		}catch(DataException de) {
+			logger.error(de.getMessage(), de);
+			return Response.status(Status.BAD_REQUEST).entity("Error en el proceso de eliminación del pedido").build();
 		}
 		
 	}
