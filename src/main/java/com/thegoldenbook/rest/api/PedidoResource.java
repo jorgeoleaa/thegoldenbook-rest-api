@@ -1,7 +1,11 @@
 package com.thegoldenbook.rest.api;
 
+import java.text.SimpleDateFormat;
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -16,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import com.pinguela.thegoldenbook.dao.DataException;
 import com.pinguela.thegoldenbook.model.Pedido;
 import com.pinguela.thegoldenbook.service.MailException;
+import com.pinguela.thegoldenbook.service.PedidoCriteria;
 import com.pinguela.thegoldenbook.service.PedidoService;
 import com.pinguela.thegoldenbook.service.impl.PedidoServiceImpl;
 
@@ -34,6 +39,52 @@ public class PedidoResource {
 	public PedidoResource() {
 		pedidoService = new PedidoServiceImpl();
 	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response findByCriteria(
+			@QueryParam("id") Long id,
+			@QueryParam("fechaDesde") String fechaDesde,
+			@QueryParam("fechaHasta") String fechaHasta,
+			@QueryParam("precioDesde") Double precioDesde,
+			@QueryParam("precioHasta") Double precioHasta,
+			@QueryParam("clienteId") Long clienteId,
+			@QueryParam("tipoEstadoPedidoId") Integer tipoEstadoPedidoId) {
+		
+		
+		 PedidoCriteria pedidoCriteria = new PedidoCriteria();
+	        pedidoCriteria.setId(id);
+	        pedidoCriteria.setPrecioDesde(precioDesde);
+	        pedidoCriteria.setPrecioHasta(precioHasta);
+	        pedidoCriteria.setClienteId(clienteId);
+	        pedidoCriteria.setTipoEstadoPedidoId(tipoEstadoPedidoId);
+
+	        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	        try {
+	            if (fechaDesde != null) {
+	                pedidoCriteria.setFechaDesde(formatter.parse(fechaDesde));
+	            }
+	            if (fechaHasta != null) {
+	                pedidoCriteria.setFechaHasta(formatter.parse(fechaHasta));
+	            }
+	        } catch (Exception pe) {
+	            logger.error("Error parsing date: " + pe.getMessage(), pe);
+	            return Response.status(Status.BAD_REQUEST)
+	                           .entity("Invalid date format. Use yyyy-MM-dd.")
+	                           .build();
+	        }
+
+	        try {
+	            List<Pedido> result = pedidoService.findByCriteria(pedidoCriteria, 1, Integer.MAX_VALUE).getPage();
+	            return Response.status(Status.OK).entity(result).build();
+	        } catch (DataException de) {
+	            logger.error("Data error: " + de.getMessage(), de);
+	            return Response.status(Status.INTERNAL_SERVER_ERROR)
+	                           .entity("An error occurred while processing your request.")
+	                           .build();
+	        }
+	    }
+		
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
