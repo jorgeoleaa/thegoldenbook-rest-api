@@ -39,7 +39,7 @@ public class PedidoResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-			summary="Creación de pedido",
+			summary="Creación de un pedido",
 			description="Crea un pedido introduciendo todos los datos del mismo",
 			responses= {
 					@ApiResponse(
@@ -77,6 +77,20 @@ public class PedidoResource {
 	
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Operation(
+			summary="Eliminación de un pedido",
+			description="Elimina un pedido a partir del identificador introducido",
+			responses= {
+					@ApiResponse(
+							responseCode = "200",
+							description = "Pedido eliminado correctamente"
+							),
+					@ApiResponse(
+							responseCode="400",
+							description="Error en el proceso de eliminación del pedido"
+							)
+			}
+			)
 	public Response delete(@QueryParam("id") Long id) {
 		
 		try {
