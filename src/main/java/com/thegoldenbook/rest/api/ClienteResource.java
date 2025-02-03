@@ -3,6 +3,7 @@ package com.thegoldenbook.rest.api;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Application;
@@ -24,6 +25,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
+@Path("/cliente")
 public class ClienteResource {
 	
 	private ClienteService clienteService = null;
@@ -35,6 +37,7 @@ public class ClienteResource {
 	}
 	
 	@DELETE
+	@Path("/delete")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(
 			summary="Eliminación de cliente",
@@ -74,6 +77,7 @@ public class ClienteResource {
 	}
 	
 	@POST
+	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
