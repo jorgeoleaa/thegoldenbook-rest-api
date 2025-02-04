@@ -109,6 +109,7 @@ public class PedidoResource {
 		
 	
 	@POST
+	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
@@ -149,6 +150,7 @@ public class PedidoResource {
 	}
 	
 	@DELETE
+	@Path("/delete")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(
 			summary="Eliminación de un pedido",
