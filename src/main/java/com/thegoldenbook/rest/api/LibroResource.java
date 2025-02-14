@@ -37,7 +37,6 @@ public class LibroResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Operation(
 				summary="Búsqueda de libros por criteria",
 			   description="Recupera una lista de libros en función de los criterios introducidos",
