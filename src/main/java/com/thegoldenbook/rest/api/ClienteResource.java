@@ -38,6 +38,7 @@ public class ClienteResource {
 	@Path("/delete")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(
+			operationId = "cliente_delete",
 			summary="Eliminación de cliente",
 			description="Eliminación de un cliente a partir del id que tiene en base de datos",
 			responses= {
@@ -75,10 +76,11 @@ public class ClienteResource {
 	}
 	
 	@POST
-	@Path("/create")
+	@Path("/registrar")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
+			operationId="cliente_registrar",
 			summary="Registro de cliente",
 			description="Registro de un cliente introduciendo todos los datos del mismo",
 			responses = {

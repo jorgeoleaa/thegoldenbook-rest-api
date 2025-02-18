@@ -38,26 +38,27 @@ public class LibroResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-				summary="Búsqueda de libros por criteria",
-			   description="Recupera una lista de libros en función de los criterios introducidos",
-			   responses= {
-						@ApiResponse(
-								responseCode="200",
-								description="Libros encontrados",
-								content=@Content(
-										mediaType=MediaType.APPLICATION_JSON,
-										schema=@Schema(implementation = LibroDTO.class)
-										)
-								),
-						@ApiResponse(
-								responseCode="404",
-								description="No se han encontrado resultados"
-								),
-						@ApiResponse(
-								responseCode="400",
-								description="Error al recuperar los datos"
-								)
-					}
+		operationId = "libro_findByCriteria",
+	    summary = "Búsqueda de libros por criteria",
+	    description = "Recupera una lista de libros en función de los criterios introducidos",
+	    responses = {
+	        @ApiResponse(
+	            responseCode = "200",
+	            description = "Libros encontrados",
+	            content = @Content(
+	                mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = LibroDTO[].class)
+	            )
+	        ),
+	        @ApiResponse(
+	            responseCode = "404",
+	            description = "No se han encontrado resultados"
+	        ),
+	        @ApiResponse(
+	            responseCode = "400",
+	            description = "Error al recuperar los datos"
+	        )
+	    }
 	)
 	public Response findByCriteria(
 			@QueryParam("id") Long id,
