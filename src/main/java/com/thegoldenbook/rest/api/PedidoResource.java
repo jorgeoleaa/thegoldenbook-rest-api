@@ -42,7 +42,7 @@ public class PedidoResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId = "pedido_findByCriteria",
+			operationId = "findPedidosByCriteria",
 			summary = "Búsqueda de pedidos por criteria",
 			description = "Búsqueda de pedidos a partir de varios parámetros introducidos",
 			responses = {
@@ -113,7 +113,7 @@ public class PedidoResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId = "pedido_create",
+			operationId = "createPedido",
 			summary="Creación de un pedido",
 			description="Crea un pedido introduciendo todos los datos del mismo",
 			responses= {
@@ -154,7 +154,7 @@ public class PedidoResource {
 	@Path("/delete")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId = "pedido_delete",
+			operationId = "deletePedido",
 			summary="Eliminación de un pedido",
 			description="Elimina un pedido a partir del identificador introducido",
 			responses= {

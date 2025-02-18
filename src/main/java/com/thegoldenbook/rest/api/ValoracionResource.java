@@ -41,7 +41,7 @@ public class ValoracionResource {
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Operation(
-	operationId="valoracion_create",
+	operationId="createValoracion",
     summary = "Creación de valoración",
     description = "Crea una valoración para un libro asociada a un cliente.",
     responses = {
@@ -79,7 +79,7 @@ public class ValoracionResource {
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-		operationId="valoracion_delete",
+		operationId="deleteValoracion",
 	    summary = "Eliminar una valoración",
 	    description = "Elimina una valoración especificando el ID del libro asociado y el ID del cliente que la realizó.",
 	    responses = {
