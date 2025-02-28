@@ -2,6 +2,8 @@ package com.thegoldenbook.rest.api;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
+import com.thegoldenbook.rest.api.param.DateParamConverterProvider;
+
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -47,6 +49,8 @@ public class TheGoldenBookRestApplication extends ResourceConfig{
 		
 		//Anotaciones de Swagger para documentar con API
 		register(io.swagger.v3.jaxrs2.integration.resources.OpenApiResource.class);
+		
+		register(DateParamConverterProvider.class);
 		
 		
 		// JAL: 
