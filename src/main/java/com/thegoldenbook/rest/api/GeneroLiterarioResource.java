@@ -37,7 +37,7 @@ public class GeneroLiterarioResource {
 	@Operation(
 			operationId = "findGenerosLiterariosByLocale",
 			summary = "Búsqueda de géneros literarios",
-			description = "Recupera una lista de géneros literarios en el locale proporcionado",
+			description = "Recupera una lista de géneros literarios en el idioma del locale proporcionado",
 			responses = {
 					@ApiResponse(
 							responseCode = "200",
