@@ -20,6 +20,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 @Path("/genero")
 public class GeneroLiterarioResource {
@@ -66,6 +67,9 @@ public class GeneroLiterarioResource {
 			generos = generoService.findAll(locale);
 		}catch(PinguelaException pe) {
 			logger.error(pe.getMessage(), pe);
+			return Response.status(Status.INTERNAL_SERVER_ERROR)
+					.entity("Error en el proceso de búsqueda de Géneros Literarios")
+					.build();
 		}
 		
 		return Response.ok(generos).build();
