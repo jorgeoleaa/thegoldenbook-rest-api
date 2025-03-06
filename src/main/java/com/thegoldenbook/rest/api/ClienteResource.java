@@ -3,22 +3,26 @@ package com.thegoldenbook.rest.api;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pinguela.PinguelaException;
 import com.pinguela.thegoldenbook.dao.DataException;
 import com.pinguela.thegoldenbook.model.ClienteDTO;
 import com.pinguela.thegoldenbook.service.ClienteService;
 import com.pinguela.thegoldenbook.service.ServiceException;
 import com.pinguela.thegoldenbook.service.impl.ClienteServiceImpl;
+import com.thegoldenbook.rest.api.dto.ClienteCredentials;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
@@ -110,5 +114,44 @@ public class ClienteResource {
 		}
 		
 		
+	}
+	
+	@POST
+	@Path("/autenticar")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Operation(
+			operationId = "autenticarCliente",
+			summary = "Autenticación de un cliente",
+			description = "Autenticación de un cliente introduciendo su corre electrónico y su contraseña",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "Proceso de autenticación correcto",
+							content = @Content(
+									mediaType = MediaType.APPLICATION_JSON,
+									schema = @Schema(implementation = ClienteDTO.class)
+									)
+							),
+					@ApiResponse(
+							responseCode = "400",
+							description = "Error en el proceso de autenticación"
+							)
+			}
+			)
+	public Response autenticar(ClienteCredentials credenciales) {
+		
+		ClienteDTO clienteAutenticado = null;
+		
+		try {
+			
+			clienteAutenticado = clienteService.autenticar(credenciales.getMail(), credenciales.getPassword());
+			
+		}catch(PinguelaException pe) {
+			logger.error(pe.getMessage(), pe);
+			return Response.status(Status.BAD_REQUEST).entity("Error en el proceso de autenticación del cliente").build();
+		}
+		
+		return Response.status(Status.OK).entity(clienteAutenticado).build();
 	}
 }
