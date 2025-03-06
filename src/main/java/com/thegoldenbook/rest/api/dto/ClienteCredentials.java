@@ -1,11 +1,11 @@
 package com.thegoldenbook.rest.api.dto;
 
-public class UsuarioCredentials {
+public class ClienteCredentials {
 	
 	private String mail;
 	private String password;
 	
-	public UsuarioCredentials() {
+	public ClienteCredentials() {
 		
 	}
 
