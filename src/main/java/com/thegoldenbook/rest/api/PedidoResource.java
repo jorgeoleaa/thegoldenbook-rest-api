@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pinguela.PinguelaException;
 import com.pinguela.thegoldenbook.dao.DataException;
 import com.pinguela.thegoldenbook.model.Pedido;
 import com.pinguela.thegoldenbook.service.MailException;
@@ -21,6 +22,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
@@ -30,11 +32,11 @@ import jakarta.ws.rs.core.Response.Status;
 
 @Path("/pedido")
 public class PedidoResource {
-	
+
 	private PedidoService pedidoService = null; 
-	
+
 	private static Logger logger = LogManager.getLogger(PedidoResource.class	);
-	
+
 	public PedidoResource() {
 		pedidoService = new PedidoServiceImpl();
 	}
@@ -72,42 +74,42 @@ public class PedidoResource {
 			@QueryParam("precioHasta") Double precioHasta,
 			@QueryParam("clienteId") Long clienteId,
 			@QueryParam("tipoEstadoPedidoId") Integer tipoEstadoPedidoId) {
-		
-		
-		 PedidoCriteria pedidoCriteria = new PedidoCriteria();
-	        pedidoCriteria.setId(id);
-	        pedidoCriteria.setPrecioDesde(precioDesde);
-	        pedidoCriteria.setPrecioHasta(precioHasta);
-	        pedidoCriteria.setClienteId(clienteId);
-	        pedidoCriteria.setTipoEstadoPedidoId(tipoEstadoPedidoId);
 
-	        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-	        try {
-	            if (fechaDesde != null) {
-	                pedidoCriteria.setFechaDesde(formatter.parse(fechaDesde));
-	            }
-	            if (fechaHasta != null) {
-	                pedidoCriteria.setFechaHasta(formatter.parse(fechaHasta));
-	            }
-	        } catch (Exception pe) {
-	            logger.error("Error parseando la fecha: " + pe.getMessage(), pe);
-	            return Response.status(Status.BAD_REQUEST)
-	                           .entity("Formato de fecha inválido. Usa yyyy-MM-dd.")
-	                           .build();
-	        }
 
-	        try {
-	            List<Pedido> result = pedidoService.findByCriteria(pedidoCriteria, 1, Integer.MAX_VALUE).getPage();
-	            return Response.status(Status.OK).entity(result).build();
-	        } catch (DataException de) {
-	            logger.error("Data error: " + de.getMessage(), de);
-	            return Response.status(Status.INTERNAL_SERVER_ERROR)
-	                           .entity("Error en el proceso de búsqueda de los pedidos")
-	                           .build();
-	        }
-	    }
-		
-	
+		PedidoCriteria pedidoCriteria = new PedidoCriteria();
+		pedidoCriteria.setId(id);
+		pedidoCriteria.setPrecioDesde(precioDesde);
+		pedidoCriteria.setPrecioHasta(precioHasta);
+		pedidoCriteria.setClienteId(clienteId);
+		pedidoCriteria.setTipoEstadoPedidoId(tipoEstadoPedidoId);
+
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			if (fechaDesde != null) {
+				pedidoCriteria.setFechaDesde(formatter.parse(fechaDesde));
+			}
+			if (fechaHasta != null) {
+				pedidoCriteria.setFechaHasta(formatter.parse(fechaHasta));
+			}
+		} catch (Exception pe) {
+			logger.error("Error parseando la fecha: " + pe.getMessage(), pe);
+			return Response.status(Status.BAD_REQUEST)
+					.entity("Formato de fecha inválido. Usa yyyy-MM-dd.")
+					.build();
+		}
+
+		try {
+			List<Pedido> result = pedidoService.findByCriteria(pedidoCriteria, 1, Integer.MAX_VALUE).getPage();
+			return Response.status(Status.OK).entity(result).build();
+		} catch (DataException de) {
+			logger.error("Data error: " + de.getMessage(), de);
+			return Response.status(Status.INTERNAL_SERVER_ERROR)
+					.entity("Error en el proceso de búsqueda de los pedidos")
+					.build();
+		}
+	}
+
+
 	@POST
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -141,15 +143,15 @@ public class PedidoResource {
 			Pedido pedidoCreated = pedidoService.findBy(id);
 			return Response.status(Status.OK).entity(pedidoCreated).build();
 		}catch(DataException de) {
-			 logger.error(de.getMessage(), de);
-			 return Response.status(Status.BAD_REQUEST).entity("Error en el proceso de creación del pedido").build();
+			logger.error(de.getMessage(), de);
+			return Response.status(Status.BAD_REQUEST).entity("Error en el proceso de creación del pedido").build();
 		}catch(MailException me) {
 			logger.error("Error al enviar el correo electrónico", me.getMessage(), me);
 			return Response.status(Status.BAD_REQUEST).entity("Error al enviar el correo de creación de peiddo").build();
 		}
-		
+
 	}
-	
+
 	@DELETE
 	@Path("/delete")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -169,7 +171,7 @@ public class PedidoResource {
 			}
 			)
 	public Response delete(@QueryParam("id") Long id) {
-		
+
 		try {
 			pedidoService.delete(id);
 			return Response.status(Status.OK).entity("Pedido eliminado correctamente").build();
@@ -177,7 +179,43 @@ public class PedidoResource {
 			logger.error(de.getMessage(), de);
 			return Response.status(Status.BAD_REQUEST).entity("Error en el proceso de eliminación del pedido").build();
 		}
-		
+
 	}
 
+	@PUT
+	@Path("/update")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Operation(
+	    operationId = "updatePedido",
+	    summary = "Actualización de un pedido",
+	    description = "Actualiza todos los datos pertenecientes al pedido",
+	    responses = {
+	        @ApiResponse(
+	            responseCode = "200",
+	            description = "Pedido actualizado correctamente"
+	        ),
+	        @ApiResponse(
+	            responseCode = "400",
+	            description = "No se pudo actualizar el pedido"
+	        ),
+	        @ApiResponse(
+	            responseCode = "500",
+	            description = "Error interno en el proceso de actualización del pedido"
+	        )
+	    }
+	)
+	public Response update(Pedido pedido) {
+
+		try {
+			if(pedidoService.update(pedido)) {
+				return Response.ok().entity(pedido).build();
+			}else {
+				return Response.status(Status.BAD_REQUEST).entity("No se ha podido actualizar el pedido").build();
+			}
+			
+		}catch(PinguelaException pe) {
+			logger.error(pe.getMessage(), pe);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error en el proceso de actualización del pedido").build();
+		}
+	}
 }
