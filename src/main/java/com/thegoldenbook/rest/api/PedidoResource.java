@@ -208,7 +208,8 @@ public class PedidoResource {
 
 		try {
 			if(pedidoService.update(pedido)) {
-				return Response.ok().entity(pedido).build();
+				Pedido pedidoActualizado = pedidoService.findBy(pedido.getId());
+				return Response.ok().entity(pedidoActualizado).build();
 			}else {
 				return Response.status(Status.BAD_REQUEST).entity("No se ha podido actualizar el pedido").build();
 			}
