@@ -185,25 +185,30 @@ public class PedidoResource {
 	@PUT
 	@Path("/update")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-	    operationId = "updatePedido",
-	    summary = "Actualización de un pedido",
-	    description = "Actualiza todos los datos pertenecientes al pedido",
-	    responses = {
-	        @ApiResponse(
-	            responseCode = "200",
-	            description = "Pedido actualizado correctamente"
-	        ),
-	        @ApiResponse(
-	            responseCode = "400",
-	            description = "No se pudo actualizar el pedido"
-	        ),
-	        @ApiResponse(
-	            responseCode = "500",
-	            description = "Error interno en el proceso de actualización del pedido"
-	        )
-	    }
-	)
+			operationId = "updatePedido",
+			summary = "Actualización de un pedido",
+			description = "Actualiza todos los datos pertenecientes al pedido",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "Pedido actualizado correctamente",
+							content = @Content(
+									mediaType = MediaType.APPLICATION_JSON,
+									schema = @Schema(implementation = Pedido.class)
+									)
+							),
+					@ApiResponse(
+							responseCode = "400",
+							description = "No se pudo actualizar el pedido"
+							),
+					@ApiResponse(
+							responseCode = "500",
+							description = "Error interno en el proceso de actualización del pedido"
+							)
+			}
+			)
 	public Response update(Pedido pedido) {
 
 		try {
@@ -213,7 +218,7 @@ public class PedidoResource {
 			}else {
 				return Response.status(Status.BAD_REQUEST).entity("No se ha podido actualizar el pedido").build();
 			}
-			
+
 		}catch(PinguelaException pe) {
 			logger.error(pe.getMessage(), pe);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error en el proceso de actualización del pedido").build();
