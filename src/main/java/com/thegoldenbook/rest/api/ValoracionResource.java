@@ -5,16 +5,21 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pinguela.PinguelaException;
 import com.pinguela.thegoldenbook.dao.DataException;
+import com.pinguela.thegoldenbook.model.Results;
 import com.pinguela.thegoldenbook.model.ValoracionDTO;
 import com.pinguela.thegoldenbook.service.ValoracionService;
 import com.pinguela.thegoldenbook.service.impl.ValoracionServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -126,4 +131,45 @@ public class ValoracionResource {
 	    }
 	}
 
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Operation(
+			operationId = "findValoracionByLibro",
+			summary = "Buscar las valoraciones de un libro",
+			description = "Busca todas las valoraciones que pertenecen al libro del id proporcionado",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "Valoraciones encontradas",
+							content = @Content(
+									mediaType = MediaType.APPLICATION_JSON,
+									schema = @Schema(implementation = ValoracionDTO[].class)
+									)
+							),
+					@ApiResponse(
+							responseCode = "404",
+							description = "No se han encontrado resultados"
+							),
+					@ApiResponse(
+							responseCode = "400",
+							description = "Error en el proceso de obtención de los datos"
+							)
+			}
+			)
+	public Response findByLibro(
+			@QueryParam("libroId") Long libroId
+			) {
+		
+		Results<ValoracionDTO> valoraciones = null;
+		try {
+			
+			valoraciones = valoracionService.findByLibro(libroId, 1, Integer.MAX_VALUE);
+			return Response.ok(valoraciones.getPage()).build();
+		}catch(PinguelaException pe) {
+			logger.error(pe.getMessage(), pe);
+			return Response.status(Status.INTERNAL_SERVER_ERROR)
+					.entity("Error en el proceso de búsqueda de valoraciones")
+					.build();
+		}
+	}
 }
