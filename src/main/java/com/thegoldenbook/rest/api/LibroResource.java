@@ -23,6 +23,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 @Path("/libro")
 public class LibroResource {
@@ -97,6 +98,9 @@ public class LibroResource {
 			
 		}catch(PinguelaException pe) {
 			logger.error(pe.getMessage(), pe);
+			return Response.status(Status.INTERNAL_SERVER_ERROR)
+					.entity("Error en el proceso de búsqueda de valoraciones")
+					.build();
 		}
 		
 		logger.info(libros.getPage());
