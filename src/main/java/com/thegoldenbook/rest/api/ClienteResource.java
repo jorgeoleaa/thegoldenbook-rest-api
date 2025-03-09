@@ -154,4 +154,60 @@ public class ClienteResource {
 		
 		return Response.status(Status.OK).entity(clienteAutenticado).build();
 	}
+	
+	@POST
+	@Path("/update")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Operation(
+			operationId = "updateCliente",
+			summary = "Actualización de un cliente",
+			description = "Actualiza un cliente introduciendo todos los datos del mismo",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "El cliente fue actualizado correctamente",
+							content = @Content(
+									mediaType = MediaType.APPLICATION_JSON,
+									schema = @Schema(implementation = ClienteDTO.class)
+									)
+							),
+					@ApiResponse(
+							responseCode = "400",
+							description = "Datos introducidos incorrectos o incompletos"
+							),
+					@ApiResponse(
+							responseCode = "500",
+							description = "Error en el proceso de actualización del cliente"
+							)
+			}
+			)
+	public Response update (ClienteDTO cliente) {
+		
+		try {
+			
+			boolean isUpdated = clienteService.update(cliente);
+			if(isUpdated) {
+				ClienteDTO clienteActualizado = clienteService.findById(cliente.getId());
+				return Response.status(Status.OK).entity(clienteActualizado).build();
+			}else {
+				return Response.status(Status.BAD_REQUEST).entity("Datos introducidos incorrectos o incompletos").build();
+			}
+			
+		}catch(PinguelaException pe) {
+			logger.error(pe.getMessage(), pe);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error en el proceso de actualización del cliente").build();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

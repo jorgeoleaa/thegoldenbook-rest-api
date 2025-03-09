@@ -129,10 +129,6 @@ public class PedidoResource {
 							),
 					@ApiResponse(
 							responseCode = "400",
-							description = "Error en el proceso de creación de pedido"
-							),
-					@ApiResponse(
-							responseCode = "400",
 							description = "Error al enviar el correo de creación del pedido"
 							)	
 			}
