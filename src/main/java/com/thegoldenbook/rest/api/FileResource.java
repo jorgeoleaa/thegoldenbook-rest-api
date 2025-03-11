@@ -1,6 +1,9 @@
 package com.thegoldenbook.rest.api;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import com.pinguela.thegoldenbook.service.FileService;
@@ -8,7 +11,7 @@ import com.pinguela.thegoldenbook.service.impl.FileServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.ws.rs.GET;
@@ -21,52 +24,79 @@ import jakarta.ws.rs.core.Response;
 
 @Path("/image")
 public class FileResource {
-	
-	private FileService fileService = null;
-	
+
+	private final FileService fileService;
+
 	public FileResource() {
-		fileService = new FileServiceImpl();
+		fileService = new FileServiceImpl(); 
 	}
-	
-	 @GET
-	    @Path("/{libroId}/imagenes")
-	    @Produces(MediaType.APPLICATION_JSON)
-	    @Operation(
-	            summary = "Obtener imágenes de un libro",
-	            description = "Devuelve una lista de rutas de imágenes asociadas a un libro específico."
+
+	@GET
+	@Path("/{libroId}/image") 
+	@Produces({ "image/png", "image/jpeg", MediaType.APPLICATION_OCTET_STREAM })
+	@Operation(
+	    summary = "Obtener una imagen de un libro",
+	    description = "Devuelve una imagen asociada a un libro en formato PNG o JPEG."
+	)
+	@ApiResponses({
+	    @ApiResponse(
+	        responseCode = "200",
+	        description = "Imagen encontrada",
+	        content = @Content(
+	            mediaType = "application/octet-stream",
+	            schema = @Schema(type = "string", format = "binary")
+	        )
+	    ),
+	    @ApiResponse(
+	        responseCode = "404",
+	        description = "Imagen no encontrada",
+	        content = @Content(mediaType = MediaType.TEXT_PLAIN)
+	    ),
+	    @ApiResponse(
+	        responseCode = "500",
+	        description = "Error interno del servidor",
+	        content = @Content(mediaType = MediaType.TEXT_PLAIN)
 	    )
-	    @ApiResponses({
-	            @ApiResponse(
-	                    responseCode = "200",
-	                    description = "Imágenes encontradas",
-	                    content = @Content(
-	                            mediaType = MediaType.APPLICATION_JSON
-	                    )
-	            ),
-	            @ApiResponse(
-	                    responseCode = "500",
-	                    description = "Error interno del servidor",
-	                    content = @Content(
-	                            mediaType = MediaType.TEXT_PLAIN
-	                    )
-	            )
-	    })
-	    public Response getImagesByBookId(
-	            @PathParam("libroId") Long libroId,
-	            @QueryParam("locale") String locale 
-	    ) {
-	        try {
-	            List<File> imageFiles = fileService.getImagesByBookId(locale, libroId);
+	})
+	public Response getImageByBookId(
+	    @PathParam("libroId") Long libroId,
+	    @QueryParam("locale") String locale
+	) {
+	    try {
+	        List<File> imageFiles = fileService.getImagesByBookId(locale, libroId);
 
-	            List<String> imagePaths = imageFiles.stream()
-	                    .map(File::getAbsolutePath)
-	                    .toList();
-
-	            return Response.ok(imagePaths).build();
-	        } catch (Exception e) {
-	            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-	                    .entity("Error al obtener las imágenes: " + e.getMessage())
+	        if (imageFiles.isEmpty()) {
+	            return Response.status(Response.Status.NOT_FOUND)
+	                    .entity("No se encontraron imágenes para el libro con ID: " + libroId)
 	                    .build();
 	        }
+
+	        File imageFile = imageFiles.get(0);
+	        InputStream fileStream = new FileInputStream(imageFile);
+	        String mediaType = getMediaType(imageFile.getName());
+
+	        return Response.ok(fileStream)
+	                .type(mediaType)
+	                .build();
+
+	    } catch (IOException e) {
+	        return Response.status(Response.Status.NOT_FOUND)
+	                .entity("Error al leer la imagen: " + e.getMessage())
+	                .build();
+	    } catch (Exception e) {
+	        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+	                .entity("Error al obtener la imagen: " + e.getMessage())
+	                .build();
 	    }
+	}
+
+
+	private String getMediaType(String fileName) {
+		if (fileName.endsWith(".png")) {
+			return "image/png";
+		} else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+			return "image/jpeg";
+		}
+		return MediaType.APPLICATION_OCTET_STREAM;
+	}
 }
