@@ -1,20 +1,20 @@
 package com.thegoldenbook.rest.api.dto;
 
-public class ClienteCredentials {
+public class UserCredentials {
 	
-	private String mail;
+	private String email;
 	private String password;
 	
-	public ClienteCredentials() {
+	public UserCredentials() {
 		
 	}
 
-	public String getMail() {
-		return mail;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setMail(String mail) {
-		this.mail = mail;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getPassword() {
@@ -25,6 +25,4 @@ public class ClienteCredentials {
 		this.password = password;
 	}
 	
-	
-
 }
