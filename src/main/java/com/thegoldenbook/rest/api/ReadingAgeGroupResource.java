@@ -37,7 +37,7 @@ public class ReadingAgeGroupResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-	    operationId = "findEdadesByLocale",
+	    operationId = "findReadingAgeGroupsByLocale",
 	    summary = "Search for book reading age groups",
 	    description = "Retrieves a list of reading age groups in the language of the provided locale",
 	    responses = {
