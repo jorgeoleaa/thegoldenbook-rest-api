@@ -9,8 +9,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 import com.google.gson.Gson;
-import com.pinguela.thegoldenbook.model.Pedido;
-import com.pinguela.thegoldenbook.model.ValoracionDTO;
+import com.thegoldenbook.model.Review;
 
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
@@ -19,15 +18,15 @@ import jakarta.ws.rs.ext.MessageBodyReader;
 import jakarta.ws.rs.ext.Provider;
 
 @Provider
-public class ValoracionReader implements MessageBodyReader<ValoracionDTO>{
+public class ReviewReader implements MessageBodyReader<Review>{
 
 	@Override
 	public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		return Pedido.class.isAssignableFrom(type);
+		return Review.class.isAssignableFrom(type);
 	}
 
 	@Override
-	public ValoracionDTO readFrom(Class<ValoracionDTO> type, Type genericType, Annotation[] annotations,
+	public Review readFrom(Class<Review> type, Type genericType, Annotation[] annotations,
 			MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
 			throws IOException, WebApplicationException {
 		
@@ -35,9 +34,9 @@ public class ValoracionReader implements MessageBodyReader<ValoracionDTO>{
 		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(entityStream, StandardCharsets.UTF_8));
 		
-		ValoracionDTO valoracion = gson.fromJson(reader, ValoracionDTO.class);
+		Review review = gson.fromJson(reader, Review.class);
 		
-		return valoracion;
+		return review;
 		
 	}
 
