@@ -3,211 +3,210 @@ package com.thegoldenbook.rest.api;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pinguela.PinguelaException;
-import com.pinguela.thegoldenbook.dao.DataException;
-import com.pinguela.thegoldenbook.model.ClienteDTO;
-import com.pinguela.thegoldenbook.service.ClienteService;
-import com.pinguela.thegoldenbook.service.ServiceException;
-import com.pinguela.thegoldenbook.service.impl.ClienteServiceImpl;
-import com.thegoldenbook.rest.api.dto.ClienteCredentials;
+import com.thegoldenbook.TheGoldenBookException;
+import com.thegoldenbook.dao.DataException;
+import com.thegoldenbook.model.User;
+import com.thegoldenbook.rest.api.dto.UserCredentials;
+import com.thegoldenbook.service.ServiceException;
+import com.thegoldenbook.service.UserService;
+import com.thegoldenbook.service.impl.UserServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
-@Path("/cliente")
-public class ClienteResource {
-	
-	private ClienteService clienteService = null;
-	
-	private static Logger logger = LogManager.getLogger(ClienteResource.class);
-	
-	public ClienteResource() {
-		clienteService = new ClienteServiceImpl();
+@Path("/user")
+public class UserResource {
+
+	private UserService userService = null;
+
+	private static Logger logger = LogManager.getLogger(UserResource.class);
+
+	public UserResource() {
+		userService = new UserServiceImpl();
 	}
-	
+
 	@DELETE
 	@Path("/delete")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId = "deleteCliente",
-			summary="Eliminación de cliente",
-			description="Eliminación de un cliente a partir del id que tiene en base de datos",
+			operationId = "deleteUser",
+			summary="User deletion",
+			description="Deletes a user based on the ID they have in the database",
 			responses= {
 					@ApiResponse(
 							responseCode = "200",
-							description = "Cliente eliminado correctamente"
+							description = "User deleted successfully"
 							),
 					@ApiResponse(
 							responseCode = "400",
-							description = "Error en el proceso de eliminación del cliente"
+							description = "Error in the user deletion process"
 							)
 			}
 			)
+
 	public Response delete(@QueryParam("id") Long id) {
-		
+
 		if(id == null) {
-			return Response.status(Status.BAD_REQUEST).entity("Datos introducidos inválidos").build();
+			return Response.status(Status.BAD_REQUEST).entity("Invalid data entered").build();
 		}
-		
+
 		boolean isDeleted = false;
-		
+
 		try {
-			isDeleted = clienteService.delete(id);
+			isDeleted = userService.delete(id);
 		}catch(ServiceException se) {
 			logger.error(se.getMessage(), se);
 		} catch (DataException de) {
 			logger.error(de.getMessage(), de);
 		}
-		
+
 		if(isDeleted) {
-			return Response.status(Status.OK).entity("Cliente eliminado correctamente").build();
+			return Response.status(Status.OK).entity("User successfully deleted").build();
 		}else {
-			return Response.status(Status.BAD_GATEWAY).entity("Error en el proceso de eliminación del cliente").build();
+			return Response.status(Status.BAD_GATEWAY).entity("Error in the user deletion process").build();
 		}
 	}
-	
+
 	@POST
-	@Path("/registrar")
+	@Path("/register")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId="registerCliente",
-			summary="Registro de cliente",
-			description="Registro de un cliente introduciendo todos los datos del mismo",
+			operationId="registerUser",
+			summary="User registration",
+			description="Registers a user by entering all their details",
 			responses = {
 					@ApiResponse(
 							responseCode = "200",
-							description = "El cliente ha sido registrado correctamente",
+							description = "The user has been registered successfully",
 							content = @Content(
 									mediaType = MediaType.APPLICATION_JSON,
-									schema=@Schema(implementation = ClienteDTO.class)
+									schema=@Schema(implementation = User.class)
 									)
 							),
 					@ApiResponse(
 							responseCode = "400",
-							description = "Error en el proceso de registro del cliente"
+							description = "Error in the user registration process"
 							)
 			}
 			)
-	public Response registrar(ClienteDTO cliente) {
-		
+	public Response registrar(User user) {
+
 		try {
-			Long id = clienteService.registrar(cliente);
-			ClienteDTO newCliente = clienteService.findById(id);
+			Long id = userService.register(user);
+			User newCliente = userService.findById(id);
 			return Response.status(Status.OK).entity(newCliente).build();
 		}catch(Exception pe) {
 			logger.error(pe.getMessage(), pe);
-			return Response.status(Status.BAD_REQUEST).entity("Error en el proceso de registro del cliente").build();
+			return Response.status(Status.BAD_REQUEST).entity("Error in the user registration process").build();
 		}
-		
-		
+
+
 	}
-	
+
 	@POST
-	@Path("/autenticar")
+	@Path("/auth")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId = "autenticarCliente",
-			summary = "Autenticación de un cliente",
-			description = "Autenticación de un cliente introduciendo su corre electrónico y su contraseña",
+			operationId = "authenticateUser",
+			summary = "User authentication",
+			description = "Authenticates a user by entering their email and password",
 			responses = {
 					@ApiResponse(
 							responseCode = "200",
-							description = "Proceso de autenticación correcto",
+							description = "Authentication process successful",
 							content = @Content(
 									mediaType = MediaType.APPLICATION_JSON,
-									schema = @Schema(implementation = ClienteDTO.class)
+									schema = @Schema(implementation = User.class)
 									)
 							),
 					@ApiResponse(
 							responseCode = "400",
-							description = "Error en el proceso de autenticación"
+							description = "Error in the authentication process"
 							)
 			}
 			)
-	public Response autenticar(ClienteCredentials credenciales) {
-		
-		ClienteDTO clienteAutenticado = null;
-		
+	public Response autenticar(UserCredentials credentials) {
+
+		User authenticatedUser = null;
+
 		try {
-			
-			clienteAutenticado = clienteService.autenticar(credenciales.getMail(), credenciales.getPassword());
-			
-		}catch(PinguelaException pe) {
+
+			authenticatedUser = userService.authenticate(credentials.getEmail(), credentials.getPassword());
+
+		}catch(TheGoldenBookException pe) {
 			logger.error(pe.getMessage(), pe);
-			return Response.status(Status.BAD_REQUEST).entity("Error en el proceso de autenticación del cliente").build();
+			return Response.status(Status.BAD_REQUEST).entity("Error in the user authentication process").build();
 		}
-		
-		return Response.status(Status.OK).entity(clienteAutenticado).build();
+
+		return Response.status(Status.OK).entity(authenticatedUser).build();
 	}
-	
+
 	@POST
 	@Path("/update")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId = "updateCliente",
-			summary = "Actualización de un cliente",
-			description = "Actualiza un cliente introduciendo todos los datos del mismo",
+			operationId = "updateUser",
+			summary = "Update a user",
+			description = "Updates a user by entering all their data",
 			responses = {
 					@ApiResponse(
 							responseCode = "200",
-							description = "El cliente fue actualizado correctamente",
+							description = "The user was successfully updated",
 							content = @Content(
 									mediaType = MediaType.APPLICATION_JSON,
-									schema = @Schema(implementation = ClienteDTO.class)
+									schema = @Schema(implementation = User.class)
 									)
 							),
 					@ApiResponse(
 							responseCode = "400",
-							description = "Datos introducidos incorrectos o incompletos"
+							description = "Incorrect or incomplete data entered"
 							),
 					@ApiResponse(
 							responseCode = "500",
-							description = "Error en el proceso de actualización del cliente"
+							description = "Error in the user update process"
 							)
 			}
 			)
-	public Response update (ClienteDTO cliente) {
-		
+	public Response update (User cliente) {
+
 		try {
-			
-			boolean isUpdated = clienteService.update(cliente);
+
+			boolean isUpdated = userService.update(cliente);
 			if(isUpdated) {
-				ClienteDTO clienteActualizado = clienteService.findById(cliente.getId());
-				return Response.status(Status.OK).entity(clienteActualizado).build();
+				User updatedUser = userService.findById(cliente.getId());
+				return Response.status(Status.OK).entity(updatedUser).build();
 			}else {
-				return Response.status(Status.BAD_REQUEST).entity("Datos introducidos incorrectos o incompletos").build();
+				return Response.status(Status.BAD_REQUEST).entity("Incorrect or incomplete data entered").build();
 			}
-			
-		}catch(PinguelaException pe) {
+
+		}catch(TheGoldenBookException pe) {
 			logger.error(pe.getMessage(), pe);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error en el proceso de actualización del cliente").build();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error in the user update process").build();
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
 }
