@@ -24,6 +24,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
@@ -110,47 +111,43 @@ public class OrderResource {
 		}
 	}
 
-
 	@POST
-	@Path("/create")
+	@Path("/{locale}/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId = "createOrder",
-			summary = "Create an order",
-			description = "Creates an order by entering all its data",
-			responses = {
-					@ApiResponse(
-							responseCode = "200",
-							description = "The order was created successfully",
-							content = @Content(
-									mediaType = MediaType.APPLICATION_JSON,
-									schema = @Schema(implementation = Order.class)
-									)
-							),
-					@ApiResponse(
-							responseCode = "400",
-							description = "Error sending the order creation email"
-							)
-			}
-			)
-	public Response create(Order order) {
-		try {
-
-			String locale = "es_ES";
-
-			Long id = orderService.create(order);
-			Order createdOrder = orderService.findBy(id, locale);
-			return Response.status(Status.OK).entity(createdOrder).build();
-		}catch(DataException de) {
-			logger.error(de.getMessage(), de);
-			return Response.status(Status.BAD_REQUEST).entity("Error in the process of creating the order.").build();
-		}catch(MailException me) {
-			logger.error("Error sending the email", me.getMessage(), me);
-			return Response.status(Status.BAD_REQUEST).entity("Error sending the order creation email").build();
-		}
-
+	    operationId = "createOrder",
+	    summary = "Create an order",
+	    description = "Creates an order by entering all its data",
+	    responses = {
+	        @ApiResponse(
+	            responseCode = "200",
+	            description = "The order was created successfully",
+	            content = @Content(
+	                mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = Order.class)
+	            )
+	        ),
+	        @ApiResponse(
+	            responseCode = "400",
+	            description = "Error sending the order creation email"
+	        )
+	    }
+	)
+	public Response create(@PathParam("locale") String locale, Order order) {
+	    try {
+	        Long id = orderService.create(order, locale);
+	        Order createdOrder = orderService.findBy(id, locale);
+	        return Response.status(Status.OK).entity(createdOrder).build();
+	    } catch (DataException de) {
+	        logger.error(de.getMessage(), de);
+	        return Response.status(Status.BAD_REQUEST).entity("Error in the process of creating the order.").build();
+	    } catch (MailException me) {
+	        logger.error("Error sending the email", me.getMessage(), me);
+	        return Response.status(Status.BAD_REQUEST).entity("Error sending the order creation email").build();
+	    }
 	}
+
 
 	@DELETE
 	@Path("/delete")
