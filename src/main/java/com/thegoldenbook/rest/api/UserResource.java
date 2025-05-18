@@ -19,6 +19,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
@@ -37,167 +38,155 @@ public class UserResource {
 	}
 
 	@DELETE
-	@Path("/delete")
+	@Path("/{locale}/delete")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId = "deleteUser",
-			summary="User deletion",
-			description="Deletes a user based on the ID they have in the database",
-			responses= {
-					@ApiResponse(
-							responseCode = "200",
-							description = "User deleted successfully"
-							),
-					@ApiResponse(
-							responseCode = "400",
-							description = "Error in the user deletion process"
-							)
-			}
-			)
+	    operationId = "deleteUser",
+	    summary = "User deletion",
+	    description = "Deletes a user based on the ID they have in the database",
+	    responses = {
+	        @ApiResponse(responseCode = "200", description = "User deleted successfully"),
+	        @ApiResponse(responseCode = "400", description = "Error in the user deletion process")
+	    }
+	)
+	public Response delete(@PathParam("locale") String locale, @QueryParam("id") Long id) {
 
-	public Response delete(@QueryParam("id") Long id) {
+	    if (id == null) {
+	        return Response.status(Status.BAD_REQUEST).entity("Invalid data entered").build();
+	    }
 
-		if(id == null) {
-			return Response.status(Status.BAD_REQUEST).entity("Invalid data entered").build();
-		}
+	    boolean isDeleted = false;
 
-		boolean isDeleted = false;
+	    try {
+	        isDeleted = userService.delete(id, locale);  
+	    } catch (ServiceException se) {
+	        logger.error(se.getMessage(), se);
+	    } catch (DataException de) {
+	        logger.error(de.getMessage(), de);
+	    }
 
-		try {
-			isDeleted = userService.delete(id);
-		}catch(ServiceException se) {
-			logger.error(se.getMessage(), se);
-		} catch (DataException de) {
-			logger.error(de.getMessage(), de);
-		}
-
-		if(isDeleted) {
-			return Response.status(Status.OK).entity("User successfully deleted").build();
-		}else {
-			return Response.status(Status.BAD_GATEWAY).entity("Error in the user deletion process").build();
-		}
+	    if (isDeleted) {
+	        return Response.status(Status.OK).entity("User successfully deleted").build();
+	    } else {
+	        return Response.status(Status.BAD_GATEWAY).entity("Error in the user deletion process").build();
+	    }
 	}
 
+
 	@POST
-	@Path("/register")
+	@Path("/{locale}/register")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId="registerUser",
-			summary="User registration",
-			description="Registers a user by entering all their details",
-			responses = {
-					@ApiResponse(
-							responseCode = "200",
-							description = "The user has been registered successfully",
-							content = @Content(
-									mediaType = MediaType.APPLICATION_JSON,
-									schema=@Schema(implementation = User.class)
-									)
-							),
-					@ApiResponse(
-							responseCode = "400",
-							description = "Error in the user registration process"
-							)
-			}
-			)
-	public Response registrar(User user) {
-
-		try {
-			Long id = userService.register(user);
-			User newCliente = userService.findById(id);
-			return Response.status(Status.OK).entity(newCliente).build();
-		}catch(Exception pe) {
-			logger.error(pe.getMessage(), pe);
-			return Response.status(Status.BAD_REQUEST).entity("Error in the user registration process").build();
-		}
-
-
+	    operationId = "registerUser",
+	    summary = "User registration",
+	    description = "Registers a user by entering all their details",
+	    responses = {
+	        @ApiResponse(
+	            responseCode = "200",
+	            description = "The user has been registered successfully",
+	            content = @Content(
+	                mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = User.class)
+	            )
+	        ),
+	        @ApiResponse(
+	            responseCode = "400",
+	            description = "Error in the user registration process"
+	        )
+	    }
+	)
+	public Response registrar(@PathParam("locale") String locale, User user) {
+	    try {
+	        Long id = userService.register(user);
+	        User newCliente = userService.findById(id, locale);
+	        return Response.status(Status.OK).entity(newCliente).build();
+	    } catch (Exception pe) {
+	        logger.error(pe.getMessage(), pe);
+	        return Response.status(Status.BAD_REQUEST).entity("Error in the user registration process").build();
+	    }
 	}
 
+
 	@POST
-	@Path("/auth")
+	@Path("/{locale}/auth")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId = "authenticateUser",
-			summary = "User authentication",
-			description = "Authenticates a user by entering their email and password",
-			responses = {
-					@ApiResponse(
-							responseCode = "200",
-							description = "Authentication process successful",
-							content = @Content(
-									mediaType = MediaType.APPLICATION_JSON,
-									schema = @Schema(implementation = User.class)
-									)
-							),
-					@ApiResponse(
-							responseCode = "400",
-							description = "Error in the authentication process"
-							)
-			}
-			)
-	public Response autenticar(UserCredentials credentials) {
+	    operationId = "authenticateUser",
+	    summary = "User authentication",
+	    description = "Authenticates a user by entering their email and password",
+	    responses = {
+	        @ApiResponse(
+	            responseCode = "200",
+	            description = "Authentication process successful",
+	            content = @Content(
+	                mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = User.class)
+	            )
+	        ),
+	        @ApiResponse(
+	            responseCode = "400",
+	            description = "Error in the authentication process"
+	        )
+	    }
+	)
+	public Response autenticar(@PathParam("locale") String locale, UserCredentials credentials) {
+	    User authenticatedUser;
 
-		User authenticatedUser = null;
+	    try {
+	        authenticatedUser = userService.authenticate(credentials.getEmail(), credentials.getPassword(), locale);
+	    } catch (TheGoldenBookException pe) {
+	        logger.error(pe.getMessage(), pe);
+	        return Response.status(Status.BAD_REQUEST).entity("Error in the user authentication process").build();
+	    }
 
-		try {
-
-			authenticatedUser = userService.authenticate(credentials.getEmail(), credentials.getPassword());
-
-		}catch(TheGoldenBookException pe) {
-			logger.error(pe.getMessage(), pe);
-			return Response.status(Status.BAD_REQUEST).entity("Error in the user authentication process").build();
-		}
-
-		return Response.status(Status.OK).entity(authenticatedUser).build();
+	    return Response.status(Status.OK).entity(authenticatedUser).build();
 	}
 
+
 	@POST
-	@Path("/update")
+	@Path("/{locale}/update")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId = "updateUser",
-			summary = "Update a user",
-			description = "Updates a user by entering all their data",
-			responses = {
-					@ApiResponse(
-							responseCode = "200",
-							description = "The user was successfully updated",
-							content = @Content(
-									mediaType = MediaType.APPLICATION_JSON,
-									schema = @Schema(implementation = User.class)
-									)
-							),
-					@ApiResponse(
-							responseCode = "400",
-							description = "Incorrect or incomplete data entered"
-							),
-					@ApiResponse(
-							responseCode = "500",
-							description = "Error in the user update process"
-							)
-			}
-			)
-	public Response update (User cliente) {
-
-		try {
-
-			boolean isUpdated = userService.update(cliente);
-			if(isUpdated) {
-				User updatedUser = userService.findById(cliente.getId());
-				return Response.status(Status.OK).entity(updatedUser).build();
-			}else {
-				return Response.status(Status.BAD_REQUEST).entity("Incorrect or incomplete data entered").build();
-			}
-
-		}catch(TheGoldenBookException pe) {
-			logger.error(pe.getMessage(), pe);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error in the user update process").build();
-		}
+	    operationId = "updateUser",
+	    summary = "Update a user",
+	    description = "Updates a user by entering all their data",
+	    responses = {
+	        @ApiResponse(
+	            responseCode = "200",
+	            description = "The user was successfully updated",
+	            content = @Content(
+	                mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = User.class)
+	            )
+	        ),
+	        @ApiResponse(
+	            responseCode = "400",
+	            description = "Incorrect or incomplete data entered"
+	        ),
+	        @ApiResponse(
+	            responseCode = "500",
+	            description = "Error in the user update process"
+	        )
+	    }
+	)
+	public Response update(@PathParam("locale") String locale, User cliente) {
+	    try {
+	        boolean isUpdated = userService.update(cliente);
+	        if (isUpdated) {
+	            User updatedUser = userService.findById(cliente.getId(), locale);
+	            return Response.status(Status.OK).entity(updatedUser).build();
+	        } else {
+	            return Response.status(Status.BAD_REQUEST).entity("Incorrect or incomplete data entered").build();
+	        }
+	    } catch (TheGoldenBookException pe) {
+	        logger.error(pe.getMessage(), pe);
+	        return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error in the user update process").build();
+	    }
 	}
+
 
 
 
