@@ -81,7 +81,7 @@ public class ReviewResource {
 	}
 
 	@DELETE
-	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Operation(
 			operationId="deleteReview",
 			summary = "Delete a review",
@@ -103,7 +103,7 @@ public class ReviewResource {
 			)
 
 	public Response delete(
-			@QueryParam("bookIdId") Long bookId,
+			@QueryParam("bookId") Long bookId,
 			@QueryParam("userId") Long userId
 			) {
 		if (bookId == null || userId == null) {
