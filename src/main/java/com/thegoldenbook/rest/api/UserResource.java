@@ -186,15 +186,49 @@ public class UserResource {
 	    }
 	}
 
-
-
-
-
-
-
-
-
-
-
+	@POST
+	@Path("/{locale}/update")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Operation(
+			operationId = "updateUser",
+			summary = "User update",
+			description = "Updates an user by entering all their data",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "The user was successfully updated",
+							content = @Content(
+									mediaType = MediaType.APPLICATION_JSON,
+									schema = @Schema(implementation = User.class)
+									)
+							),
+					@ApiResponse(
+							responseCode = "400",
+							description = "Incorrect or incomplete data entered"
+							),
+					@ApiResponse(
+							responseCode = "500",
+							description = "Error in the user update process"
+							)
+			}
+			)
+	public Response update (@PathParam("locale") String locale, User user) {
+		
+		try {
+			
+			boolean isUpdated = userService.update(user);
+			if(isUpdated) {
+				User updatedUser = userService.findById(user.getId(), locale);
+				return Response.status(Status.OK).entity(updatedUser).build();
+			}else {
+				return Response.status(Status.BAD_REQUEST).entity("Incorrect or incomplete data entered").build();
+			}
+			
+		}catch(TheGoldenBookException pe) {
+			logger.error(pe.getMessage(), pe);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error in the user update process").build();
+		}
+	}
 
 }
