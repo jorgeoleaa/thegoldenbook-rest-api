@@ -137,7 +137,7 @@ public class UserResource {
 	    }
 	)
 	public Response autenticar(@PathParam("locale") String locale, UserCredentials credentials) {
-	    User authenticatedUser;
+	    User authenticatedUser = null;
 
 	    try {
 	        authenticatedUser = userService.authenticate(credentials.getEmail(), credentials.getPassword(), locale);
