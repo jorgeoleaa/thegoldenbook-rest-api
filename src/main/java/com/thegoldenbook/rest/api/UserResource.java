@@ -129,6 +129,10 @@ public class UserResource {
 	        @ApiResponse(
 	            responseCode = "400",
 	            description = "Error in the authentication process"
+	        ),
+	        @ApiResponse(
+	            responseCode = "401",
+	            description = "Invalid email or password"
 	        )
 	    }
 	)
@@ -137,13 +141,22 @@ public class UserResource {
 
 	    try {
 	        authenticatedUser = userService.authenticate(credentials.getEmail(), credentials.getPassword(), locale);
-	    } catch (TheGoldenBookException pe) {
-	        logger.error(pe.getMessage(), pe);
-	        return Response.status(Status.BAD_REQUEST).entity("Error in the user authentication process").build();
+	    } catch (TheGoldenBookException e) {
+	        logger.error(e.getMessage(), e);
+	        return Response.status(Status.BAD_REQUEST)
+	                       .entity("Error in the user authentication process")
+	                       .build();
 	    }
 
-	    return Response.status(Status.OK).entity(authenticatedUser).build();
+	    if (authenticatedUser == null) {
+	        return Response.status(Status.UNAUTHORIZED)
+	                       .entity("Invalid email or password")
+	                       .build();
+	    }
+
+	    return Response.ok(authenticatedUser).build();
 	}
+
 
 
 	@GET
