@@ -150,7 +150,7 @@ public class UserResource {
 	@Path("/{locale}/user")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-	    operationId = "findByEmail",
+	    operationId = "findUserByEmail",
 	    summary = "Find user by email",
 	    description = "Searches and retrieves a user based on their email address",
 	    responses = {
@@ -172,7 +172,7 @@ public class UserResource {
 	        )
 	    }
 	)
-	public Response findByEmail(@PathParam("locale") String locale, String email) {
+	public Response findByEmail(@PathParam("locale") String locale, @QueryParam("email") String email) {
 	    try {
 	        User searchedUser = userService.findByEmail(email, locale);
 	        if (searchedUser != null) {
