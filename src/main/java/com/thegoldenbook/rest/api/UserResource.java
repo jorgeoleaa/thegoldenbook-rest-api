@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -145,18 +146,17 @@ public class UserResource {
 	}
 
 
-	@POST
-	@Path("/{locale}/update")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@GET
+	@Path("/{locale}/user")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-	    operationId = "updateUser",
-	    summary = "Update a user",
-	    description = "Updates a user by entering all their data",
+	    operationId = "findByEmail",
+	    summary = "Find user by email",
+	    description = "Searches and retrieves a user based on their email address",
 	    responses = {
 	        @ApiResponse(
 	            responseCode = "200",
-	            description = "The user was successfully updated",
+	            description = "The user was successfully found",
 	            content = @Content(
 	                mediaType = MediaType.APPLICATION_JSON,
 	                schema = @Schema(implementation = User.class)
@@ -168,22 +168,21 @@ public class UserResource {
 	        ),
 	        @ApiResponse(
 	            responseCode = "500",
-	            description = "Error in the user update process"
+	            description = "Error in the search process"
 	        )
 	    }
 	)
-	public Response update(@PathParam("locale") String locale, User cliente) {
+	public Response findByEmail(@PathParam("locale") String locale, String email) {
 	    try {
-	        boolean isUpdated = userService.update(cliente);
-	        if (isUpdated) {
-	            User updatedUser = userService.findById(cliente.getId(), locale);
-	            return Response.status(Status.OK).entity(updatedUser).build();
+	        User searchedUser = userService.findByEmail(email, locale);
+	        if (searchedUser != null) {
+	            return Response.status(Status.OK).entity(searchedUser).build();
 	        } else {
 	            return Response.status(Status.BAD_REQUEST).entity("Incorrect or incomplete data entered").build();
 	        }
 	    } catch (TheGoldenBookException pe) {
 	        logger.error(pe.getMessage(), pe);
-	        return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error in the user update process").build();
+	        return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Error in the search process").build();
 	    }
 	}
 
