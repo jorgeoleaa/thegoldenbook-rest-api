@@ -75,7 +75,8 @@ public class OrderResource {
 			@QueryParam("minPrice") Double minPrice,
 			@QueryParam("maxPrice") Double maxPrice,
 			@QueryParam("userId") Long userId,
-			@QueryParam("orderStatusId") Integer orderStatusId) {
+			@QueryParam("orderStatusId") Integer orderStatusId,
+			@QueryParam("locale") String locale) {
 
 
 		OrderCriteria orderCriteria = new OrderCriteria();
@@ -84,7 +85,8 @@ public class OrderResource {
 		orderCriteria.setMaxPrice(maxPrice);
 		orderCriteria.setUserId(userId);
 		orderCriteria.setOrderStatusId(orderStatusId);
-
+		orderCriteria.setLocale(locale);
+		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			if (startDate != null) {
