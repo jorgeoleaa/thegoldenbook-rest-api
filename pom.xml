@@ -139,6 +139,21 @@
 		    <artifactId>gson</artifactId>
 		    <version>2.11.0</version>
 		</dependency>
+		
+		<!--https://github.com/bucket4j/bucket4j-->
+		<dependency>
+    		<groupId>com.bucket4j</groupId>
+    		<artifactId>bucket4j-core</artifactId>
+    		<version>8.10.1</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+		<dependency>
+		  <groupId>redis.clients</groupId>
+		  <artifactId>jedis</artifactId>
+		  <version>5.1.0</version>
+		</dependency>
+		
     </dependencies>
 
     <properties>
