@@ -3,6 +3,7 @@ package com.thegoldenbook.rest.api;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import com.thegoldenbook.rest.api.param.DateParamConverterProvider;
+import com.thegoldenbook.rest.api.ratelimit.RateLimitFilter;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -49,6 +50,8 @@ public class TheGoldenBookRestApplication extends ResourceConfig {
 		register(io.swagger.v3.jaxrs2.integration.resources.OpenApiResource.class);
 
 		register(DateParamConverterProvider.class);
+		
+		register(RateLimitFilter.class);
 
 		// https://github.com/swagger-api/swagger-ui?tab=readme-ov-file
 		// If you are looking for plain ol' HTML/JS/CSS, download the latest release and copy the contents of the /dist folder to your server.
