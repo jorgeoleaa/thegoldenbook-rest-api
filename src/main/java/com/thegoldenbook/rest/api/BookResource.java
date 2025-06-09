@@ -5,9 +5,11 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.gson.reflect.TypeToken;
 import com.thegoldenbook.TheGoldenBookException;
 import com.thegoldenbook.model.Book;
 import com.thegoldenbook.model.Results;
+import com.thegoldenbook.rest.api.utils.RedisCache;
 import com.thegoldenbook.service.BookCriteria;
 import com.thegoldenbook.service.BookService;
 import com.thegoldenbook.service.impl.BookServiceImpl;
@@ -91,11 +93,24 @@ public class BookResource {
 		criteria.setFormatId(formatId);
 		criteria.setLocale(locale);
 		
-		Results<Book> books = null;
+		Results<Book> cachedResults = null;
 		
 		try {
 			
-			books = bookService.findByCriteria(criteria, 1, Integer.MAX_VALUE);
+			String cacheKey = criteria.toCacheKey();
+			
+			cachedResults = RedisCache.getObject(cacheKey, new TypeToken<Results<Book>>(){}.getType());
+			
+			if(cachedResults != null) {
+				System.out.println("⏱ Cache HIT");
+				return Response.ok(cachedResults.getPage()).build();
+			}
+			
+			System.out.println("💾 Cache MISS");
+			
+			cachedResults = bookService.findByCriteria(criteria, 1, Integer.MAX_VALUE);
+			
+			RedisCache.setObject(cacheKey, cachedResults, 60);
 			
 		}catch(TheGoldenBookException pe) {
 			logger.error(pe.getMessage(), pe);
@@ -104,9 +119,9 @@ public class BookResource {
 					.build();
 		}
 		
-		logger.info(books.getPage());
+		logger.info(cachedResults.getPage());
 		
-		return Response.ok(books.getPage()).build();
+		return Response.ok(cachedResults.getPage()).build();
 	}
 	
 	
