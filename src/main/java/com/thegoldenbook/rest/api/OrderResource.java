@@ -6,9 +6,12 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.gson.reflect.TypeToken;
 import com.thegoldenbook.TheGoldenBookException;
 import com.thegoldenbook.dao.DataException;
 import com.thegoldenbook.model.Order;
+import com.thegoldenbook.model.Results;
+import com.thegoldenbook.rest.api.utils.RedisCache;
 import com.thegoldenbook.service.MailException;
 import com.thegoldenbook.service.OrderCriteria;
 import com.thegoldenbook.service.OrderService;
@@ -103,8 +106,20 @@ public class OrderResource {
 		}
 
 		try {
-			List<Order> result = orderService.findByCriteria(orderCriteria, 1, Integer.MAX_VALUE).getPage();
-			return Response.status(Status.OK).entity(result).build();
+			
+			String cacheKey = orderCriteria.toCacheKey();
+			
+			Results<Order> cachedResults = RedisCache.getObject(cacheKey, new TypeToken<Results<Order>>(){}.getType());
+			
+			if(cachedResults != null) {
+				logger.info("⏱ Cache HIT");
+				return Response.ok(cachedResults.getPage()).build();
+			}
+			
+			logger.info("💾 Cache MISS");
+			cachedResults = orderService.findByCriteria(orderCriteria, 1, Integer.MAX_VALUE);
+			RedisCache.setObject(cacheKey, cachedResults.getPage(), 60);
+			return Response.status(Status.OK).entity(cachedResults.getPage()).build();
 		} catch (DataException de) {
 			logger.error("Data error: " + de.getMessage(), de);
 			return Response.status(Status.INTERNAL_SERVER_ERROR)
