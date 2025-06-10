@@ -102,11 +102,11 @@ public class BookResource {
 			cachedResults = RedisCache.getObject(cacheKey, new TypeToken<Results<Book>>(){}.getType());
 			
 			if(cachedResults != null) {
-				System.out.println("⏱ Cache HIT");
+				logger.info("⏱ Cache HIT");
 				return Response.ok(cachedResults.getPage()).build();
 			}
 			
-			System.out.println("💾 Cache MISS");
+			logger.info("💾 Cache MISS");
 			
 			cachedResults = bookService.findByCriteria(criteria, 1, Integer.MAX_VALUE);
 			
