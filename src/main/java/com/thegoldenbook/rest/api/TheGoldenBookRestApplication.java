@@ -19,6 +19,7 @@ import jakarta.ws.rs.ApplicationPath;
 //configurar aspectos de jersey que antes iban en el web.xml
 
 @OpenAPIDefinition(
+<<<<<<< refs/remotes/origin/main
 	    info = @Info(
 	        title = "The Golden Book API",
 	        version = "1.0",
@@ -37,6 +38,28 @@ import jakarta.ws.rs.ApplicationPath;
 	    		@Server(url = "http://localhost:8080/thegoldenbook-rest-api/", description = "Servidor Local")
 	    		// Cuando lo subais al hosting
 	    		// @Server(url = "https://api.thegoldenbook.com", description = "Servidor de Producción"),
+=======
+		info = @Info(
+				title = "The Golden Book API",
+				version = "1.0",
+				description = "API for a book-selling business",
+				contact = @Contact(
+						name = "API Support",
+						email = "jorgeolea@proton.me",
+						url = "https://thegoldenbook.com"
+						),
+				license = @License(
+						name = "MIT",
+						url = "https://opensource.org/licenses/MIT"
+						)
+				),
+		servers = {
+				@Server(url = "http://localhost:8080/thegoldenbook-rest-api/", description = "Local Server")
+				// When deploying to hosting
+				// @Server(url = "https://api.thegoldenbook.com", description = "Production Server"),
+		}
+		)
+>>>>>>> local
 
 	    }
 )
