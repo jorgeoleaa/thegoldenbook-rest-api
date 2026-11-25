@@ -24,7 +24,7 @@ REST API behind **The Golden Book**, a platform for selling new and antique book
          rate limiting · Redis cache
                  |
          Middleware (Java)
-         business logic · JDBC / Hibernate
+         business logic · JDBC
                  |
                MySQL
 ```
