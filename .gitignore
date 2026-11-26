@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local environment ###
+# Secrets for docker compose (copy .env.example to .env)
+.env
+# Database dumps with real data: never commit them
+docker/mysql/init/*.sql

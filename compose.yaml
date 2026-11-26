@@ -1,0 +1,28 @@
+services:
+  mysql:
+    # Same version the dump was taken from (MySQL 8.0.42)
+    image: mysql:8.0.42
+    container_name: thegoldenbook-mysql
+    restart: unless-stopped
+    environment:
+      # Values come from the .env file next to this one (not committed)
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      # Only reachable from this machine, not from the local network
+      - "127.0.0.1:3306:3306"
+    volumes:
+      # Database files survive container restarts and re-creations
+      - mysql-data:/var/lib/mysql
+      # *.sql files here run once, only when mysql-data is empty
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  mysql-data:

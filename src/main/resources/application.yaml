@@ -1,3 +1,12 @@
 spring:
   application:
     name: thegoldenbook-rest-api
+
+  # Load the same .env that docker compose uses, if it exists
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${MYSQL_DATABASE}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
