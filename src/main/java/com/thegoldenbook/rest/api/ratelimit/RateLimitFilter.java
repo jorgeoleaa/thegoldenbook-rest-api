@@ -46,7 +46,7 @@ public class RateLimitFilter implements ContainerRequestFilter {
         String ipHeader = requestContext.getHeaderString("X-Forwarded-For");
         String clientIp;
 
-        if (ipHeader != null && !ipHeader.isEmpty()) {
+        if (ipHeader != null && !ipHeader.isBlank()) {
             clientIp = ipHeader.split(",")[0].trim();
         } else {
             clientIp = uriInfo.getRequestUri().getHost();

@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import com.pinguela.thegoldenbook.service.FileService;
-import com.pinguela.thegoldenbook.service.impl.FileServiceImpl;
+import com.thegoldenbook.service.FileService;
+import com.thegoldenbook.service.impl.FileServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,62 +32,63 @@ public class FileResource {
 	}
 
 	@GET
-	@Path("/{libroId}/image") 
+	@Path("/{bookId}/image")
 	@Produces({ "image/png", "image/jpeg", MediaType.APPLICATION_OCTET_STREAM })
 	@Operation(
-	    summary = "Obtener una imagen de un libro",
-	    description = "Devuelve una imagen asociada a un libro en formato PNG o JPEG."
-	)
+			summary = "Retrieve an image of a book",
+			description = "Returns an image associated with a book in PNG or JPEG format."
+			)
 	@ApiResponses({
-	    @ApiResponse(
-	        responseCode = "200",
-	        description = "Imagen encontrada",
-	        content = @Content(
-	            mediaType = "application/octet-stream",
-	            schema = @Schema(type = "string", format = "binary")
-	        )
-	    ),
-	    @ApiResponse(
-	        responseCode = "404",
-	        description = "Imagen no encontrada",
-	        content = @Content(mediaType = MediaType.TEXT_PLAIN)
-	    ),
-	    @ApiResponse(
-	        responseCode = "500",
-	        description = "Error interno del servidor",
-	        content = @Content(mediaType = MediaType.TEXT_PLAIN)
-	    )
+		@ApiResponse(
+				responseCode = "200",
+				description = "Image found",
+				content = @Content(
+						mediaType = "application/octet-stream",
+						schema = @Schema(type = "string", format = "binary")
+						)
+				),
+		@ApiResponse(
+				responseCode = "404",
+				description = "Image not found",
+				content = @Content(mediaType = MediaType.TEXT_PLAIN)
+				),
+		@ApiResponse(
+				responseCode = "500",
+				description = "Internal server error",
+				content = @Content(mediaType = MediaType.TEXT_PLAIN)
+				)
 	})
+
 	public Response getImageByBookId(
-	    @PathParam("libroId") Long libroId,
-	    @QueryParam("locale") String locale
-	) {
-	    try {
-	        List<File> imageFiles = fileService.getImagesByBookId(locale, libroId);
+			@PathParam("bookId") Long bookId,
+			@QueryParam("locale") String locale
+			) {
+		try {
+			List<File> imageFiles = fileService.getImagesByBookId(locale, bookId);
 
-	        if (imageFiles.isEmpty()) {
-	            return Response.status(Response.Status.NOT_FOUND)
-	                    .entity("No se encontraron imágenes para el libro con ID: " + libroId)
-	                    .build();
-	        }
+			if (imageFiles.isEmpty()) {
+				return Response.status(Response.Status.NOT_FOUND)
+						.entity("No images were found for the book with ID: " + bookId)
+						.build();
+			}
 
-	        File imageFile = imageFiles.get(0);
-	        InputStream fileStream = new FileInputStream(imageFile);
-	        String mediaType = getMediaType(imageFile.getName());
+			File imageFile = imageFiles.get(0);
+			InputStream fileStream = new FileInputStream(imageFile);
+			String mediaType = getMediaType(imageFile.getName());
 
-	        return Response.ok(fileStream)
-	                .type(mediaType)
-	                .build();
+			return Response.ok(fileStream)
+					.type(mediaType)
+					.build();
 
-	    } catch (IOException e) {
-	        return Response.status(Response.Status.NOT_FOUND)
-	                .entity("Error al leer la imagen: " + e.getMessage())
-	                .build();
-	    } catch (Exception e) {
-	        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-	                .entity("Error al obtener la imagen: " + e.getMessage())
-	                .build();
-	    }
+		} catch (IOException e) {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("Error reading the image: " + e.getMessage())
+					.build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+					.entity("Error retrieving the image: " + e.getMessage())
+					.build();
+		}
 	}
 
 

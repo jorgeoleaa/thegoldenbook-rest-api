@@ -5,10 +5,10 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pinguela.PinguelaException;
-import com.pinguela.thegoldenbook.model.Formato;
-import com.pinguela.thegoldenbook.service.FormatoService;
-import com.pinguela.thegoldenbook.service.impl.FormatoServiceImpl;
+import com.thegoldenbook.TheGoldenBookException;
+import com.thegoldenbook.model.Format;
+import com.thegoldenbook.service.FormatService;
+import com.thegoldenbook.service.impl.FormatServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,59 +22,60 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
-@Path("/formato")
-public class FormatoResource {
-	
-	private FormatoService formatoService = null;
-	
-	private static Logger logger = LogManager.getLogger(FormatoResource.class);
-	
-	public FormatoResource() {
-		formatoService = new FormatoServiceImpl();
+@Path("/format")
+public class FormatResource {
+
+	private FormatService formatService = null;
+
+	private static Logger logger = LogManager.getLogger(FormatResource.class);
+
+	public FormatResource() {
+		formatService = new FormatServiceImpl();
 	}
-	
-	
+
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(
-			operationId = "findFormatosByLocale",
-			summary = "Búsqueda de formatos",
-			description = "Recupera una lista de formatos en el idioma del locale proporcionado",
+			operationId = "findFormatsByLocale",
+			summary = "Search for formats",
+			description = "Retrieves a list of formats in the language of the provided locale",
 			responses = {
 					@ApiResponse(
 							responseCode = "200",
-							description = "Formatos encontrados",
+							description = "Formats found",
 							content = @Content(
 									mediaType = MediaType.APPLICATION_JSON,
-									schema = @Schema(implementation = Formato[].class)
+									schema = @Schema(implementation = Format[].class)
 									)
 							),
 					@ApiResponse(
 							responseCode = "404",
-							description = "No se han encontrado resultados"
+							description = "No results found"
 							),
 					@ApiResponse(
 							responseCode = "400",
-							description = "Error al recuperar los datos"
+							description = "Error retrieving data"
 							)
 			}
 			)
+
 	public Response findAll(@QueryParam("locale") String locale) {
-			
-		List<Formato> formatos = null;
-		
+
+		List<Format> formats = null;
+
 		try {
-			
-			formatos = formatoService.findAll(locale);
-			
-		}catch(PinguelaException pe) {
+
+			formats = formatService.findAll(locale);
+
+		}catch(TheGoldenBookException pe) {
 			logger.error(pe.getMessage(), pe);
 			return Response.status(Status.INTERNAL_SERVER_ERROR)
-					.entity("Error en el proceso de búsqueda de los formatos")
+					.entity("Error in the formats search process")
 					.build();
 		}
-		
-		return Response.ok(formatos).build();
+
+		return Response.ok(formats).build();
 	}
 
 }
