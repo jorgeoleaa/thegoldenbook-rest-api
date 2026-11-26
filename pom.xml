@@ -1,163 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.pinguela.thegoldenbook</groupId>
-    <artifactId>thegoldenbook-rest-api</artifactId>
-    <packaging>war</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <name>thegoldenbook-rest-api</name>
-
-    <build>
-        <finalName>thegoldenbook-rest-api</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <inherited>true</inherited>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.4.0</version>
-            </plugin>
-        </plugins>
-    </build>
-    
-     <!-- Tu repositorio Maven privado en GitLab -->
-	<repositories>
-	  <repository>
-	    <id>gitlab-maven</id>
-	    <url>https://gitlab.com/api/v4/projects/65401383/packages/maven</url>
-	  </repository>
-	</repositories>
-	<distributionManagement>
-	  <repository>
-	    <id>gitlab-maven</id>
-	    <url>https://gitlab.com/api/v4/projects/65401383/packages/maven</url>
-	  </repository>
-	  <snapshotRepository>
-	    <id>gitlab-maven</id>
-	    <url>https://gitlab.com/api/v4/projects/65401383/packages/maven</url>
-	  </snapshotRepository>
-	</distributionManagement>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.glassfish.jersey</groupId>
-                <artifactId>jersey-bom</artifactId>
-                <version>${jersey.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <dependencies>
-    
-    	<!--Swagger -->
-    	
-    	<!-- Para jersery 3.x -->
-        <dependency>
-	    	<groupId>jakarta.ws.rs</groupId>
-    		<artifactId>jakarta.ws.rs-api</artifactId>
-    		<version>3.1.0</version>  <!-- Asegúrate de que sea compatible con tu versión de Jersey -->
-		</dependency>
-		
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <!--<artifactId>jersey-container-servlet-core</artifactId> -->
-            <!-- use the following artifactId if you don't need servlet 2.x compatibility -->
-             <artifactId>jersey-container-servlet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.inject</groupId>
-            <artifactId>jersey-hk2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-binding</artifactId>
-        </dependency>
-        
-        <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.2.0</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.thegoldenbook</groupId>
+	<artifactId>thegoldenbook-rest-api</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name/>
+	<description/>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>21</java.version>
+	</properties>
+	<dependencies>
 		<dependency>
-		    <groupId>javax.servlet</groupId>
-		    <artifactId>javax.servlet-api</artifactId>
-		    <version>4.0.1</version>
-		    <scope>provided</scope>
-		</dependency>
-        
-        <!--TheGoldenBook-Middleware dependency stored in the private repository in gitlab-->
-	    <dependency>
-			<groupId>TheGoldenBook-Middleware-v1</groupId>
-			<artifactId>TheGoldenBook-Middleware-v1</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-    
-    	<!--Logger-->
-	    <dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.22.1</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>2.22.1</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-    	
-		<!-- Swagger/OpenAPI -->
 		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-annotations</artifactId>
-			<version>2.2.27</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-jaxrs2-jakarta</artifactId>
-			<version>2.2.27</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
-		<!-- https://mvnrepository.com/artifact/org.webjars/swagger-ui -->
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>swagger-ui</artifactId>
-			<version>4.19.1</version>
-		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-		<dependency>
-		    <groupId>com.google.code.gson</groupId>
-		    <artifactId>gson</artifactId>
-		    <version>2.11.0</version>
-		</dependency>
-		
-		<!--https://github.com/bucket4j/bucket4j-->
-		<dependency>
-    		<groupId>com.bucket4j</groupId>
-    		<artifactId>bucket4j-core</artifactId>
-    		<version>8.10.1</version>
-		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
-		<dependency>
-		  <groupId>redis.clients</groupId>
-		  <artifactId>jedis</artifactId>
-		  <version>5.1.0</version>
-		</dependency>
-		
-    </dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
-    <properties>
-        <jersey.version>3.1.10</jersey.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 </project>
